@@ -27,33 +27,32 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  String inputText;
-  String outputText;
+  final inputText = TextEditingController();
+  final outputText = TextEditingController();
 
-  String xx = '''ggg
-  
-  hhhtt
-
-  grg''';
-
-  final myController = TextEditingController();
-
+  final ogChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  final tgChar = '𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗';
 
 
   void _incrementCounter() {
+    final strings = <String>[];
+    inputText.text.runes.forEach((int rune) {
+      var ty = rune + 119808 - 65;
+      var character= String.fromCharCode(ty);
+      strings.add(character);
+      print('$character : $rune -> $ty === ${strings.join('')}');
+    });
+
     setState(() {
-      _counter++;
+      outputText.text = inputText.text;
     });
   }
 
   @override
   Widget build(BuildContext context) {
 
-    myController.text = '''ggg
-  
-  hhhtt
+    inputText.text = 'ABCDEFabcdef';
 
-  grg''';
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -63,12 +62,13 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextField(
-            controller: myController,
+            controller: inputText,
             maxLines: 8,
             decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
             // style: TextStyle(backgroundColor: Colors.green),
           ),
           TextField(
+            controller: outputText,
             maxLines: 8,
             decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
           ),
