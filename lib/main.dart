@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,59 +27,98 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   final inputText = TextEditingController();
   final outputText = TextEditingController();
 
-  final ogChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  final tgChar = '𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗';
-
-
-  void _incrementCounter() {
-    final strings = <String>[];
-    inputText.text.runes.forEach((int rune) {
-      var ty = rune + 119808 - 65;
-      var character= String.fromCharCode(ty);
-      strings.add(character);
-      print('$character : $rune -> $ty === ${strings.join('')}');
-    });
-
-    setState(() {
-      outputText.text = inputText.text;
-    });
+  @override
+  void initState() {
+    super.initState();
+    inputText.addListener(_convertingText);
   }
+
+  convertText(type, input) {
+    // 65-90,91-122,48-57
+    // 119808-119833,119834-119859,120782-120791
+    if (input >= 65 && input <= 90)
+      return String.fromCharCode(119743 + input);
+    else if (input >= 91 && input <= 122)
+      return String.fromCharCode(119737 + input);
+    else if (input >= 48 && input <= 57)
+      return String.fromCharCode(120734 + input);
+    else
+      return String.fromCharCode(input);
+  }
+
+  void _convertingText() async {
+    var output = inputText.text;
+    inputText.text.runes.forEach((int rune) {
+      return output =
+          output.replaceAll(String.fromCharCode(rune), convertText(2, rune));
+    });
+    outputText.value = TextEditingValue(text: output);
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
-
-    inputText.text = 'ABCDEFabcdef';
+    TextStyle googleFontHeader = GoogleFonts.cinzel(
+      color: Colors.white,
+    );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      backgroundColor: Color.fromRGBO(240, 118, 59, 1),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          TextField(
-            controller: inputText,
-            maxLines: 8,
-            decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
-            // style: TextStyle(backgroundColor: Colors.green),
+          Container(
+            // color: Colors.blue,
+            margin: EdgeInsets.only(bottom: 20.0),
+            height: 96,
+            child: SizedBox.expand(
+              child: Center(child: Stack(
+                  overflow: Overflow.visible,
+                  children: <Widget>[
+                    Text("Portra Rica's ",
+                    style: googleFontHeader.copyWith(fontSize: 48)),
+                    Positioned(
+                      right: 0.0,
+                      top: 48.0,
+                      child: Text('Weird Character style',style: googleFontHeader.copyWith(fontSize: 20)),
+                    )
+                  ],
+                ),)
+            ),
           ),
-          TextField(
-            controller: outputText,
-            maxLines: 8,
-            decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
+          Container(
+            constraints: BoxConstraints(maxWidth: 600),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 40),
+            child: TextField(
+              controller: inputText,
+              maxLines: 12,
+              decoration: InputDecoration.collapsed(
+                hintText: "Enter your text",
+                hintStyle: TextStyle(color: Colors.grey)
+              ),
+              style: TextStyle(color: Colors.white, fontSize: 24),
+            ),
           ),
+          Container(
+            constraints: BoxConstraints(maxWidth: 600),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 40),
+            child: TextField(
+              controller: outputText,
+              maxLines: 12,
+              decoration: InputDecoration.collapsed(
+                hintText: "Your output will be here",
+                hintStyle: TextStyle(color: Colors.grey)
+              ),
+              style: TextStyle(color: Colors.white, fontSize: 24),
+            ),
+          ),
+        
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), 
     );
   }
 }
